@@ -1,16 +1,29 @@
 #include <mlx.h>
 #include <unistd.h>
 #include <math.h>
+#include <stdlib.h>
 
 
-void	ft_putchar(char c)
+int exit_x(void)
+{
+    exit(1);
+}
+
+void		ft_putchar(char c)
 {
 	write (1, &c, 1);
 }
 
-static void Bresenham4Line(void *mlx_ptr, void *win_ptr, int x0, int y0, 
-                                                                 int x1, int y1)
-        {
+int	key_press(int keycode, void *param)
+{
+	if (keycode == 53)
+		exit(EXIT_SUCCESS);
+	return (0);
+}
+
+void		Bresenham(void *mlx_ptr, void *win_ptr,
+							int x0, int y0, int x1, int y1)
+{
             //Изменения координат
             int dx = (x1 > x0) ? (x1 - x0) : (x0 - x1);
             int dy = (y1 > y0) ? (y1 - y0) : (y0 - y1);
@@ -35,8 +48,8 @@ static void Bresenham4Line(void *mlx_ptr, void *win_ptr, int x0, int y0,
                     }
                     else
                         d += d1;
-                    mlx_pixel_put(mlx_ptr, win_ptr, x, y, 0xffffff);
-                    x+=sx;
+					mlx_pixel_put(mlx_ptr, win_ptr, x, y, 0xffffff);
+					x+=sx;
                 }
             }
             else
@@ -44,7 +57,7 @@ static void Bresenham4Line(void *mlx_ptr, void *win_ptr, int x0, int y0,
                 int d = (dx << 1) - dy;
                 int d1 = dx << 1;
                 int d2 = (dx - dy) << 1;
-               mlx_pixel_put(mlx_ptr, win_ptr, x0, y0, 0xffffff);
+				mlx_pixel_put(mlx_ptr, win_ptr, x0, y0, 0xffffff);
                 int x = x0;
                 int y = y0 + sy;
                 for (int i = 1; i <= dy; i++)
@@ -61,15 +74,13 @@ static void Bresenham4Line(void *mlx_ptr, void *win_ptr, int x0, int y0,
                 }
             }
         }
-
-
-int		deal_key(int key, void *param)
+/* int		deal_key(int key, void *param)
 {
 	ft_putchar ('X');
 //	mlx_pixel_put(mlx_ptr, win_ptr, 250, 250, 0xf92391);
 	return (0);
 }
-
+ */
 static  void  iso ( int  * x ,  int  * y ,  int  z ) 
 { 
 	int  previous_x ; 
@@ -91,41 +102,9 @@ int	main()
 
 	int	i;
 	int	j;
-	int	i_n;
-	int	j_n;
 
-/* 	i = 300;
-	while (i < 500)
-	{
-		j = 150;
-		while (j < 350)
-		{
-			i_n = i;
-			j_n = j;
-			iso(&i_n, &j_n, 200);
-			if (i == 300 || i == 499 || j == 150 || j == 349)
-				mlx_pixel_put(mlx_ptr, win_ptr, i_n, j_n, 0xf9b591);
-			j++;
-		}
-		i++;
-	}
-	i  = 300;
-    while (i < 500)
-    {
-        j = 150;
-        while (j < 350)
-        {
-            i_n = i;
-            j_n = j;
-            iso(&i_n, &j_n, 230);
-			if (i == 300 || i == 499 || j == 150 || j == 349)
-            	mlx_pixel_put(mlx_ptr, win_ptr, i_n, j_n, 0xf9b591);
-            j++;
-        }
-        i++;
-    } */
-
-	int matrix[11][19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	int matrix[11][19] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 10, 10, 0, 0, 10, 10, 0, 0, 0, 10, 10, 10, 10, 10, 0, 0, 0,
 	0, 0, 10, 10, 0, 0, 10, 10, 0, 0, 0, 0, 0, 0, 0, 10, 10, 0, 0,
@@ -135,7 +114,8 @@ int	main()
 	0, 0, 0, 0, 0, 0, 10, 10, 0, 0, 0, 10, 10, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 10, 10, 0, 0, 0, 10, 10, 10, 10, 10, 10, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
 
 	int x0;
 	int y0;
@@ -158,7 +138,7 @@ int	main()
 					y1 = 30 * (j - 1);
 					iso(&x0, &y0, 2 * matrix[j][i]);
 					iso(&x1, &y1, 2 * matrix[j - 1][i]);
-					Bresenham4Line (mlx_ptr, win_ptr, x0, y0, x1, y1);
+					Bresenham (mlx_ptr, win_ptr, x0, y0, x1, y1);
 				}
 			if (i != 0)
 				{
@@ -169,35 +149,15 @@ int	main()
 					y1 = 30 * j;
 					iso(&x0, &y0, 2 * matrix[j][i]);
 					iso(&x1, &y1, 2 * matrix[j][i - 1]);
-					Bresenham4Line (mlx_ptr, win_ptr, x0, y0, x1, y1);
-				}
-			if (i != 18)
-				{
-					x0 = 30 * i + 400;
-					y0 = 30 * j;
-
-					x1 = 30 * (i + 1) + 400;
-					y1 = 30 * j;
-					iso(&x0, &y0, 2 * matrix[j][i]);
-					iso(&x1, &y1, 2 * matrix[j][i + 1]);
-					Bresenham4Line (mlx_ptr, win_ptr, x0, y0, x1, y1);
-				}
-			if (j != 10)
-				{
-					x0 = 30 * i + 400;
-					y0 = 30 * j;
-
-					x1 = 30 * i + 400;
-					y1 = 30 * (j + 1);
-					iso(&x0, &y0, 2 * matrix[j][i]);
-					iso(&x1, &y1, 2 * matrix[j + 1][i]);
-					Bresenham4Line (mlx_ptr, win_ptr, x0, y0, x1, y1);
+					Bresenham (mlx_ptr, win_ptr, x0, y0, x1, y1);
 				}
 			j++;
 		}
 		i++;
 	}
-	/* Bresenham4Line (mlx_ptr, win_ptr, 1, 1, 400, 400); */
+
+	mlx_hook(win_ptr, 17, 0, exit_x, 0);
+	mlx_hook (win_ptr, 2, 0, key_press, 0);
 
 	mlx_loop(mlx_ptr);
 }
