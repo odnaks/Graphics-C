@@ -6,7 +6,7 @@
 /*   By: drestles <drestles@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/13 02:57:53 by drestles          #+#    #+#             */
-/*   Updated: 2018/12/13 07:58:57 by drestles         ###   ########.fr       */
+/*   Updated: 2018/12/13 08:52:32 by drestles         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int exit_x(void)
 void		pixel_to_img(t_fdf *f, int x, int y)
 {
 	if (x >= 0 && x < MAX_X && y >= 0 && y < MAX_Y)
-		*(unsigned int*)(f->data + (x * (f->bpp)) + (y * f->s_l)) = 0x759200;
+			*(unsigned int*)(f->data + (x * (f->bpp)) + (y * f->s_l)) = f->col;
 }
 
 void		n_image(t_fdf *fdf)

@@ -6,7 +6,7 @@
 /*   By: drestles <drestles@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/13 01:17:41 by drestles          #+#    #+#             */
-/*   Updated: 2018/12/13 07:18:18 by drestles         ###   ########.fr       */
+/*   Updated: 2018/12/13 08:46:38 by drestles         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ typedef struct s_fdf {
     int     move_y;
 
     int     zoom;
+
+	int		col;
 
     int     **matrix;
 

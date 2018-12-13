@@ -6,24 +6,13 @@
 /*   By: drestles <drestles@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/13 01:17:45 by drestles          #+#    #+#             */
-/*   Updated: 2018/12/13 07:05:26 by drestles         ###   ########.fr       */
+/*   Updated: 2018/12/13 08:36:53 by drestles         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/fdf.h"
 
 #include <stdio.h>
-
-/* int scroll_up (t_fdf *fdf)
-{
-	fdf->move_x += 10;
-	mlx_destroy_image(fdf->mlx, fdf->image);
-	n_image(fdf);
-	mlx_clear_window(fdf->mlx, fdf->win);
-	fill_img(fdf);
-	return (0);
-} */
-
 
 void keycodes(int keycode, t_fdf *fdf)
 {
@@ -74,10 +63,8 @@ int			main(int ac, char **av)
 	parsing(fd, y, &fdf);
 	ini_mlx(&fdf);
 	fill_img(&fdf);
-	//mlx_hook(fdf.win, 2, 1, key_hook, &fdf);
 
 	mlx_hook (fdf.win, 2, 0, key_press, &fdf);
-	//mlx_hook (fdf.win, 5, 0, scroll_down, 0);
 	mlx_hook (fdf.win, 17, 0, exit_x, 0);
 	mlx_loop(fdf.mlx);
 	return (1);
