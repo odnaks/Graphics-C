@@ -3,111 +3,83 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drestles <drestles@student.42.fr>          +#+  +:+       +#+        */
+/*   By: trhogoro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/12/13 01:17:45 by drestles          #+#    #+#             */
-/*   Updated: 2018/12/14 22:23:52 by drestles         ###   ########.fr       */
+/*   Created: 2018/12/30 09:39:38 by trhogoro          #+#    #+#             */
+/*   Updated: 2018/12/30 09:39:39 by trhogoro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/fdf.h"
+#include "fdf.h"
+#include "mlx.h"
+#include <stdlib.h>
 
-#include <stdio.h>
-
-
-void init_fdf(t_fdf *fdf)
+void		init_correction(t_correction *c, int type)
 {
-	fdf->mlx = NULL;
-	fdf->win = NULL;
-	fdf->image = NULL;
-	fdf->data = NULL;
-	fdf->bpp = 0;
-	fdf->s_l = 0;
-	fdf->endian = 0;
-	fdf->max_x = 0;
-	fdf->max_y = 0;
-	fdf->ind_x = 0;
-	fdf->ind_y = 0;
-	fdf->move_x = 0;
-	fdf->move_y = 0;
-	fdf->zoom = 0;
-	fdf->col = 0;
-	fdf->matrix = 0x0;
-	fdf->matrixc = 0x0;
-}
+	int i;
 
-void	print_menu(t_fdf *fdf)
-{
-	int		i;
-
+	c->type = type;
 	i = 0;
-	while (i < 2560)
+	while (i < 3)
 	{
-		mlx_pixel_put(fdf->mlx, fdf->win, i, 50, 0x9eff00);
+		c->mv[i].x = 0;
+		c->mv[i].y = 0;
+		c->mv[i].z = 0;
+		c->rt[i].x = 0;
+		c->rt[i].y = 0;
+		c->rt[i].z = 0;
+		c->sc[i] = 1;
 		i++;
 	}
-	mlx_string_put(fdf->mlx, fdf->win, 30, 15, 0xfffe18, "HELP:");
-	mlx_string_put(fdf->mlx, fdf->win, 230, 15, 0x9eff00, "< ^ >");
-	mlx_string_put(fdf->mlx, fdf->win, 300, 15, 0x55eefe, "move");
-	mlx_string_put(fdf->mlx, fdf->win, 500, 15, 0x9eff00, " + - ");
-	mlx_string_put(fdf->mlx, fdf->win, 570, 15, 0x55eefe, "zoom");
-}  
-
-void	keycodes(int keycode, t_fdf *fdf)
-{
-	if (keycode == 53)
-		exit_x();
-	if (keycode == 124)
-		fdf->move_x += 30;
-	if (keycode == 123)
-		fdf->move_x -= 30;
-	if (keycode == 126)
-		fdf->move_y -= 30;
-	if (keycode == 125)
-		fdf->move_y += 30;
-	if (keycode == 69)
-		fdf->zoom += 1;
-	if (keycode == 78)
-		if (fdf->zoom > 2)
-			fdf->zoom -= 1;
 }
 
-int key_press(int keycode, t_fdf *fdf)
+int			ft_check_args(int argc, char **argv, t_params *params)
 {
-	keycodes(keycode, fdf);
+	char		*file;
 
-	mlx_destroy_image(fdf->mlx, fdf->image);
-	n_image(fdf);
-	//mlx_clear_window(fdf->mlx, fdf->win);
-	fill_img(fdf);
-	//print_menu(fdf);
+	if (argc != 2 && argc != 4)
+		ft_print_usage();
+	if (argc == 4)
+	{
+		(ft_strequ(ft_itoa(ft_atoi(argv[2])), argv[2])) ?
+			params->width = ft_atoi(argv[2]) : ft_print_usage();
+		(ft_strequ(ft_itoa(ft_atoi(argv[3])), argv[3])) ?
+			params->height = ft_atoi(argv[3]) : ft_print_usage();
+		if ((params->width < MIN_WIDTH) || (params->width > MAX_WIDTH))
+			ft_error(E_WIDTH);
+		if ((params->height < MIN_HEIGHT) || (params->height > MAX_HEIGHT))
+			ft_error(E_HEIGHT);
+	}
+	else
+	{
+		params->width = MAX_X;
+		params->height = MAX_Y - Y0;
+	}
+	file = argv[1];
+	if (read_obj(file, params) != E_SUCCESS)
+		ft_error(E_FILE_ERR);
+	return (E_SUCCESS);
+}
 
+int			main(int argc, char **argv)
+{
+	t_params	params;
+
+	ft_check_args(argc, argv, &params);
+	init_correction(&params.c, P_ISO);
+	params.max_x = 0;
+	params.max_y = 0;
+	params.mlx = mlx_init();
+	params.win = mlx_new_window(params.mlx, params.width, params.height, "fdf");
+	ft_apply_color(params.points, &params);
+	ft_set_start_settings_par(&params);
+	ft_set_start_settings_iso(&params);
+	ft_set_start_settings_con(&params);
+	ft_apply_correction(params.c, &params);
+	ft_print_menu(&params);
+	gr_draw_image(&params);
+	mlx_hook(params.win, 2, 0, key_hook, &params);
+	mlx_hook(params.win, 17, 0, exit_x, 0);
+	mlx_loop(params.mlx);
 	return (0);
-}
-
-int			main(int ac, char **av)
-{
-	//int		y;
-	int		fd;
-	t_fdf	fdf;
-
-	//fdf.zo = 10;
-	if (ac < 2 || ac >= 3)
-		ac_error();
-//	if ((fd = open(av[1], O_RDONLY)) == -1)
-//		file_error();
-//	y = check_valid_file(fd);
-//	close(fd);
-	if ((fd = open(av[1], O_RDONLY)) == -1)
-		file_error();
-	parsing(fd, &fdf);
-	if (!fdf.matrix)
-	ft_putendl("NULL");
-	ini_mlx(&fdf);
-	fill_img(&fdf);
-	print_menu(&fdf);
-	mlx_hook (fdf.win, 2, 0, key_press, &fdf);
-	mlx_hook (fdf.win, 17, 0, exit_x, 0);
-	mlx_loop(fdf.mlx);
-	return (1);
 }
