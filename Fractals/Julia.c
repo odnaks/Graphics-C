@@ -24,6 +24,8 @@ typedef struct	s_param {
 	int			move_x;
 	int			move_y;
 	int 		plus;
+	float		cRe_s;
+	float		cIm_s;
 }				t_param;
 
 void		pixel_to_img(t_param *f, int x, int y)
@@ -34,69 +36,90 @@ void		pixel_to_img(t_param *f, int x, int y)
 
 void	drawfr(t_param *param)
 {
-	float	zi, zr, ci, cr, tmp;
-	int		i, j, k, m;
-	int		DEPTH = 30;
-	int		x = (param->w / 2) * param->zoom;
-	float	xd = (float)x;
-	int		y = (param->h / 2) * param->zoom;
-	float	yd = (float)y / 1.5;
+	int		x;
+	int		y;
+	int		i;
+	float	pr, pi; 
+	float	newRe, newIm, oldRe, oldIm; 
+	int		maxIterations = 30;
 
-	i = -x;
-	while (i < x)
+	//float cRe = -0.7;
+  	//float cIm = 0.27015;
+	y = 0;
+	while (y < param->h)
 	{
-		ci = ((float)i) / xd;
-		j = -y;
-		while (j < y)
-		{		
-			cr = ((float)j) / yd;	
-			zi = zr = 0.0;
-			k = 0;
-			while (k < DEPTH)
-			{	
-				tmp = zr*zr - zi*zi;
-				zi = 2*zr*zi + ci;
-				zr = tmp + cr;
-				if (zr*zr + zi*zi > 4)
-					break;
-				k++;
-			}
-			if (k < DEPTH)
+		x = 0;
+		while (x < param->w)
+		{
+			newRe = 1.5 * (x - param->w / 2) / (0.5 * param->zoom * param->w) + param->move_x;
+			newIm = (y - param->h / 2) / (0.5 * param->zoom * param->h) + param->move_y;
+			//newRe = newIm = oldRe = oldIm = 0;
+			i = 0;
+			while (i < maxIterations)
 			{
-				param->color = 0x340000 - 10000 * (k % 8);
-				pixel_to_img (param, i + (param->w / 2)
-				+ param->move_x, j + (param->h / 2) + param->move_y);
+				oldRe = newRe;
+				oldIm = newIm;
+				newRe = oldRe * oldRe - oldIm * oldIm + param->cRe_s;
+				newIm = 2 * oldRe * oldIm + param->cIm_s;
+				if ((newRe * newRe + newIm * newIm) > 16) break;
+					i++;
+			}
+			if (i < maxIterations)
+			{
+ 				param->color = 0x340000 - 10000 * (i % 8);
+				pixel_to_img (param, x, y);
+
 			}
 			else
 			{
-					param->color = 0x000000;
-					pixel_to_img (param, i + (param->w / 2) + param->move_x, j + (param->h / 2) + param->move_y);
+				param->color = 0x000000;
+				pixel_to_img (param, x, y);
 			}
-			j++;
+			x++;
 		}
-		i++;
+		y++;
 	}
+
 	mlx_clear_window(param->mlx_ptr, param->win_ptr);
 	mlx_put_image_to_window (param->mlx_ptr, param->win_ptr, param->image, 0, 0);	
 }
  
 
-int	key_button(int button, t_param *param)
+int 	mouse_move(int x, int y, t_param *param)
+{
+//	printf("%d %d\n", x, y);
+	if (x < param->w && x > 0 && y < param->h && y >0)
+	{
+		param->cRe_s = 1.5 * (x - param-> w / 2) / (0.5 * param->w);
+		param->cIm_s = (y - param->h / 2) / (0.5 * param->h);
+		drawfr(param);
+	}
+
+	return (0);
+}
+
+
+
+int		key_button(int button, t_param *param)
 {
 	if (button == 53)
 		exit(1);
 	if (button == 69)
 	{
-		(param->plus)+=0.5;
-		param->zoom += (1.1 * param->plus);
-		param->move_y += (270 * param->plus);
+		if (param->zoom > 197)
+			return (0);
+		param->plus *= 2.1;
+		param->zoom *= 1.2;
+		if (param->plus < 16)
+		 	param->move_x -= 0.25;
+		param->move_x -= (0.15 / param->plus);
 		drawfr(param);
 	}
 	if (button == 78)
 	{
-		(param->plus)+=0.5;
-		param->zoom -= (1.1 * param->plus);
-		param->move_y -= (270 * param->plus);
+		if (param->zoom > 197)
+			return (0);
+		param->zoom /= 1.2;
 		drawfr(param);
 	}
 	if (button == 124)
@@ -134,16 +157,18 @@ int			mouse_zoom(int button, int x, int y, t_param *param)
 	//printf("%d\n", button);
 	if (button == 5)
 	{
-		(param->plus)+=0.5;
-		param->zoom += (1.1 * param->plus);
-		param->move_y += (270 * param->plus);
+		if (param->zoom > 197)
+			return (0);
+		param->plus *= 2.1;
+		param->zoom *= 1.2;
+		if (param->plus < 16)
+		 	param->move_x -= 0.25;
+		param->move_x -= (0.15 / param->plus);
 		drawfr(param);
 	}
 	if (button == 4)
 	{
-		(param->plus)+=0.5;
-		param->zoom -= (1.1 * param->plus);
-		param->move_y -= (270 * param->plus);
+		param->zoom /= 1.2;
 		drawfr(param);
 	}
 	return (0);
@@ -173,7 +198,6 @@ void	*func_name(void *arg)
 
 int		main()
 {
-
 	//pthread_create();
 
 	t_param param;
@@ -185,49 +209,50 @@ int		main()
 	param.move_y = 0;
 	param.plus = 1;
 
-	int		x = (param.w / 2) * param.zoom;
-	float	xd = (float)x;
-	int		y = (param.h / 2) * param.zoom;
-	float	yd = (float)y / 1.5;
-	float zi, zr, ci, cr, tmp;
-	int i, j, k, m;
-	int DEPTH = 20;
-
 	param.mlx_ptr = mlx_init();
 	param.win_ptr = mlx_new_window(param.mlx_ptr, param.w, param.h, "fract'ol");
 	param.image = mlx_new_image(param.mlx_ptr, param.w = 500, param.h = 500);
 	param.data = mlx_get_data_addr (param.image, &param.bpp, &param.s_l, &param.end);
 	param.bpp /= 8;
 
-	i = -x;
-	while (i < x)
-	{
-		ci = ((float)i) / xd;
-		j = -y;
-		while (j < y)
-		{		
-			cr = ((float)j) / yd;
-			zi = zr = 0.0;
-			k = 0;
-			while (k < DEPTH)
-			{	
-				tmp = zr*zr - zi*zi;
-				zi = 2*zr*zi + ci;
-				zr = tmp + cr;
-				if (zr*zr + zi*zi > 4)
-					break;
-				k++;
+	int		x;
+	int		y;
+	int		i;
+	float pr, pi; 
+	float newRe, newIm, oldRe, oldIm; 
+	float zoom = 1, moveX = 0, moveY = 0; 
+	int maxIterations = 300;
+
+
+	float cRe = -0.7;
+  	float cIm = 0.27015;
+
+
+	for(int y = 0; y < param.h; y++)
+		for(int x = 0; x < param.w; x++)
+		{
+			newRe = 1.5 * (x - param.w / 2) / (0.5 * zoom * param.w) + moveX;
+			newIm = (y - param.h / 2) / (0.5 * zoom * param.h) + moveY;
+			//newRe = newIm = oldRe = oldIm = 0;
+			i = 0;
+			while (i < maxIterations)
+			{
+				oldRe = newRe;
+				oldIm = newIm;
+				newRe = oldRe * oldRe - oldIm * oldIm + cRe;
+				newIm = 2 * oldRe * oldIm + cIm;
+				if((newRe * newRe + newIm * newIm) > 4) break;
+				i++;
 			}
-			if (k < DEPTH)
-				mlx_pixel_put(param.mlx_ptr, param.win_ptr, i + x, j + y, 0x340000 - 10000 * (k % 8));
+			if (i < maxIterations)
+				mlx_pixel_put(param.mlx_ptr, param.win_ptr, x, y, 0x340000 - 10000 * (i % 8));
 			else
-				mlx_pixel_put(param.mlx_ptr, param.win_ptr, i + x, j + y, 0x000000);
-			j++;
+				mlx_pixel_put(param.mlx_ptr, param.win_ptr, x, y, 0x000000);
 		}
-		i++;
-	}
+
   	mlx_hook(param.win_ptr, 2, 0, key_button, &param);
 	mlx_hook(param.win_ptr, 4, 0, mouse_zoom, &param);
+	mlx_hook(param.win_ptr, 6, 0, mouse_move, &param);
 	mlx_loop(param.mlx_ptr);
 	return 0;
 }

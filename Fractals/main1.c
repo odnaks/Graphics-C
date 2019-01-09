@@ -205,33 +205,48 @@ int		main()
 	param.data = mlx_get_data_addr (param.image, &param.bpp, &param.s_l, &param.end);
 	param.bpp /= 8;
 
-	i = -x;
-	while (i < x)
-	{
-		ci = ((float)i) / xd;
-		j = -y;
-		while (j < y)
-		{		
-			cr = ((float)j) / yd;	
-			zi = zr = 0.0;
-			k = 0;
-			while (k < DEPTH)
-			{	
-				tmp = zr*zr - zi*zi;
-				zi = 2*zr*zi + ci;
-				zr = tmp + cr;
-				if (zr*zr + zi*zi > 4)
-					break;
-				k++;
+
+	float pr, pi; 
+	float newRe, newIm, oldRe, oldIm; 
+	float zoom = 1, moveX = -0.5, moveY = 0; 
+	int maxIterations = 300;
+
+
+	float cRe = -0.7;
+  	float cIm = 0.27015;
+
+
+	for(int y = 0; y < param.h; y++)
+		for(int x = 0; x < param.w; x++)
+		{
+			newRe = 1.5 * (x - param.w / 2) / (0.5 * zoom * param.w) + moveX;
+			newIm = (y - param.h / 2) / (0.5 * zoom * param.h) + moveY;
+			//newRe = newIm = oldRe = oldIm = 0;
+			i = 0;
+			while (i < maxIterations)
+			{
+				oldRe = newRe;
+				oldIm = newIm;
+				newRe = oldRe * oldRe - oldIm * oldIm + cRe;
+				newIm = 2 * oldRe * oldIm + cIm;
+				if((newRe * newRe + newIm * newIm) > 4) break;
+				i++;
 			}
-			if (k < DEPTH)
-				mlx_pixel_put(param.mlx_ptr, param.win_ptr, i + x, j + y, 0x340000 - 10000 * (k % 8));
+			if (i < maxIterations)
+				mlx_pixel_put(param.mlx_ptr, param.win_ptr, x, y, 0x340000 - 10000 * (i % 8));
 			else
-				mlx_pixel_put(param.mlx_ptr, param.win_ptr, i + x, j + y, 0x000000);
-			j++;
+				mlx_pixel_put(param.mlx_ptr, param.win_ptr, x, y, 0x000000);
 		}
-		i++;
-	}
+
+
+
+
+
+
+
+
+
+
   	mlx_hook(param.win_ptr, 2, 0, key_button, &param);
 	mlx_hook(param.win_ptr, 4, 0, mouse_zoom, &param);
 	mlx_loop(param.mlx_ptr);
