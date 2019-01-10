@@ -1,4 +1,4 @@
-SRC = fractol.c ft_strcmp.c mb.c julia.c
+SRC = fractol.c ft_strcmp.c mb.c julia.c init.c
 
 ALL:
-	cc -I /usr/local/include $(SRC) -L /usr/local/lib -lmlx -framework OpenGL -framework AppKit
+	cc -o fractol -I /usr/local/include $(SRC) -L /usr/local/lib -lmlx -framework OpenGL -framework AppKit
