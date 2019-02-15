@@ -1,4 +1,5 @@
 # Fractol
+![intro](https://github.com/odnaks/trash/blob/master/fractol%20intr.png)
 
 ### how to install:
 ```shell
@@ -30,3 +31,30 @@ right -/+     | zoom fractal (like scroll wheel, but without mouse:))
 
 ![start](https://github.com/odnaks/trash/blob/master/Screen%20Shot%202019-02-15%20at%2011.45.21.png)
 ![start](https://github.com/odnaks/trash/blob/master/Screen%20Shot%202019-02-15%20at%2011.46.35.png)
+
+# FDF
+![intro](https://github.com/odnaks/trash/blob/master/fdf%20intro.png)
+### how to install:
+```shell
+make
+```
+### how to start:
+```shell
+./fdf <file name> or 
+./fdf <file name> <width> <height>.
+```
+##### for example: 
+```shell
+./fdf test/maps/42.fdf
+```
+![fdf.42](https://github.com/odnaks/trash/blob/master/Screen%20Shot%202019-02-15%20at%2012.15.04.png)
+
+```shell
+./fdf test/maps/mars.fdf
+```
+![fdf.mars](https://github.com/odnaks/trash/blob/master/fdf%20mars.png)
+
+### my marks:
+FDF  | Fractol
+----------------|----------------------
+![mark fdf](https://github.com/odnaks/trash/blob/master/mark%20fdf.png)       | ![mark fractol](https://github.com/odnaks/trash/blob/master/mark%20fractol.png)
