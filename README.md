@@ -37,6 +37,7 @@ right -/+     | zoom fractal (like scroll wheel, but without mouse:))
 ![start](https://github.com/odnaks/settings/blob/master/screens/Screen%20Shot%202019-02-15%20at%2011.46.35.png)
 
 <div id='id-section2'/>
+
 ## FDF
 ![intro](https://github.com/odnaks/settings/blob/master/screens/fdf%20intro.png)
 ### how to install:
