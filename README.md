@@ -1,8 +1,9 @@
-# My Table of content
-- [Section 1](#id-section1)
-- [Section 2](#id-section2)
+# Basic graphic projects
+- [Fractol](#id-section1)
+- [FdF](#id-section2)
 
-# Fractol <div id='id-section1'/>
+<div id='id-section1'/>
+## Fractol
 ![intro](https://github.com/odnaks/settings/blob/master/screens/fractol%20intr.png)
 
 ### how to install:
@@ -36,7 +37,8 @@ right -/+     | zoom fractal (like scroll wheel, but without mouse:))
 ![start](https://github.com/odnaks/settings/blob/master/screens/Screen%20Shot%202019-02-15%20at%2011.45.21.png)
 ![start](https://github.com/odnaks/settings/blob/master/screens/Screen%20Shot%202019-02-15%20at%2011.46.35.png)
 
-# FDF <div id='id-section2'/>
+<div id='id-section2'/>
+## FDF
 ![intro](https://github.com/odnaks/settings/blob/master/screens/fdf%20intro.png)
 ### how to install:
 ```shell
