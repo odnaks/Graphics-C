@@ -2,8 +2,7 @@
 - [Fractol](#id-section1)
 - [FdF](#id-section2)
 
-<div id='id-section1'/>
-## Fractol
+## Fractol <div id='id-section1'/>
 ![intro](https://github.com/odnaks/settings/blob/master/screens/fractol%20intr.png)
 
 ### how to install:
